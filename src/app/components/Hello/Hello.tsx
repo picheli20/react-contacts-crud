@@ -18,7 +18,7 @@ function Hello({ name, enthusiasmLevel = 1, onIncrement, onDecrement }: IProps) 
   return (
     <div className='hello'>
       <div className='greeting'>
-        Hello {name + getExclamationMarks(enthusiasmLevel)}
+        Hello
       </div>
       <div>
         <RaisedButton label='-' onClick={onDecrement} />
@@ -31,7 +31,3 @@ function Hello({ name, enthusiasmLevel = 1, onIncrement, onDecrement }: IProps) 
 export default Hello;
 
 // helpers
-
-function getExclamationMarks(numChars: number) {
-  return Array(numChars + 1).join('!');
-}

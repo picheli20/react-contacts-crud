@@ -5,15 +5,17 @@ import { Router, Route, browserHistory } from 'react-router';
 import { Provider } from 'react-redux';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
-import { Home } from './app/components/Home/Home';
+import Home from './app/containers/Home';
 import { IStoreState } from './app/types';
-import { enthusiasm } from './app/reducers';
+import { userInfo } from './app/reducers';
 
 import './index.scss';
 
-const store = createStore<IStoreState>(enthusiasm, {
-  enthusiasmLevel: 1,
-  languageName: 'TypeScript',
+const store = createStore<IStoreState>(userInfo, {
+  userInfo: {},
+  loginInfo: {
+    isLogged: false,
+  }
 });
 
 // to auth, add this header: Authorization          Basic btoa(username:password)

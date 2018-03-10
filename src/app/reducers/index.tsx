@@ -1,14 +1,17 @@
-
-import { EnthusiasmAction } from '../actions';
+import { UserInfoAction } from '../actions';
 import { IStoreState } from '../types/index';
-import { INCREMENT_ENTHUSIASM, DECREMENT_ENTHUSIASM } from '../constants/index';
+import { UPDATE_USER_INFO, UPDATE_LOGIN_INFO } from '../constants/index';
 
-export function enthusiasm(state: IStoreState, action: EnthusiasmAction): IStoreState {
+export function userInfo(state: IStoreState, action: UserInfoAction): IStoreState {
   switch (action.type) {
-    case INCREMENT_ENTHUSIASM:
-      return { ...state, enthusiasmLevel: state.enthusiasmLevel + 1 };
-    case DECREMENT_ENTHUSIASM:
-      return { ...state, enthusiasmLevel: Math.max(1, state.enthusiasmLevel - 1) };
+    case UPDATE_USER_INFO:
+      if (!state.userInfo) {
+        state.userInfo = {};
+      }
+      state.userInfo[action.key] = action.value;
+      return { ...state, userInfo: state.userInfo };
+    case UPDATE_LOGIN_INFO:
+      return { ...state, loginInfo: action.loginInfo };
     default:
       return state;
   }

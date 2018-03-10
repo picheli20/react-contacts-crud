@@ -1,24 +1,28 @@
-
+import { IUserInfo, ILoginInfo } from '../types/';
 import * as constants from '../constants';
 
-export interface IncrementEnthusiasm {
-    type: constants.INCREMENT_ENTHUSIASM;
+export interface IUserProps {
+  onSubmit?: () => void;
+  fieldChange?: (value: string, key: string) => any;
+  userInfo?: IUserInfo;
+  loginInfo?: ILoginInfo;
 }
 
-export interface IDecrementEnthusiasm {
-    type: constants.DECREMENT_ENTHUSIASM;
+export interface ILoginProps {
+  login?: (username: string, password: string, success: Function, error: Function) => void;
+  logout?: () => void;
+  loginInfo?: ILoginInfo;
 }
 
-export type EnthusiasmAction = IncrementEnthusiasm | IDecrementEnthusiasm;
-
-export function incrementEnthusiasm(): IncrementEnthusiasm {
-    return {
-        type: constants.INCREMENT_ENTHUSIASM
-    };
+export interface IUpdateUserInfo {
+  type: constants.UPDATE_USER_INFO;
+  key: string;
+  value: any;
 }
 
-export function decrementEnthusiasm(): IDecrementEnthusiasm {
-    return {
-        type: constants.DECREMENT_ENTHUSIASM
-    };
+export interface IUpdateLoginInfo {
+  type: constants.UPDATE_LOGIN_INFO;
+  loginInfo: ILoginInfo;
 }
+
+export type UserInfoAction = IUpdateUserInfo | IUpdateLoginInfo;

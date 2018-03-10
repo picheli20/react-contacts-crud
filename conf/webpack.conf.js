@@ -37,6 +37,15 @@ module.exports = {
           'react-hot-loader',
           'ts-loader'
         ]
+      },
+      {
+        test: /\.(png|jpg|gif)$/,
+        use: [
+          {
+            loader: 'file-loader',
+            options: {}
+          }
+        ]
       }
     ]
   },

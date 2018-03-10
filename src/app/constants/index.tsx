@@ -1,6 +1,7 @@
+export const BASE_URL = 'https://paguemob-interview-environment.firebaseapp.com/';
 
-export const INCREMENT_ENTHUSIASM = 'INCREMENT_ENTHUSIASM';
-export type INCREMENT_ENTHUSIASM = typeof INCREMENT_ENTHUSIASM;
+export const UPDATE_USER_INFO = 'UPDATE_USER_INFO';
+export type UPDATE_USER_INFO = typeof UPDATE_USER_INFO;
 
-export const DECREMENT_ENTHUSIASM = 'DECREMENT_ENTHUSIASM';
-export type DECREMENT_ENTHUSIASM = typeof DECREMENT_ENTHUSIASM;
+export const UPDATE_LOGIN_INFO = 'UPDATE_LOGIN_INFO';
+export type UPDATE_LOGIN_INFO = typeof UPDATE_LOGIN_INFO;
