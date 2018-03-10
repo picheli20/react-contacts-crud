@@ -29,7 +29,6 @@ export class Header extends React.Component<ILoginProps> {
   handleClose = () => this.setState({open: false});
 
   success() {
-    toast.success('Logado com successo!');
     this.setValue(false, 'loading');
     this.handleClose();
   }
@@ -97,7 +96,7 @@ export class Header extends React.Component<ILoginProps> {
     return (
       <div>
         <AppBar
-          title='Contact Crud'
+          title='Contacts'
           iconElementLeft={<IconButton><ActionHome /></IconButton>}
           iconElementRight={
             this.props.loginInfo.isLogged ?

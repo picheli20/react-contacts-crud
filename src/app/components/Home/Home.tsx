@@ -3,6 +3,7 @@ import { ToastContainer } from 'react-toastify';
 
 import Header from '../../containers/Header';
 import UserInfo from '../../containers/UserInfo';
+import Contact from '../../containers/Contact';
 import { IUserProps } from '../../actions';
 
 import './Home.scss';
@@ -19,12 +20,20 @@ export class Home extends React.Component<IUserProps> {
       </div>
     );
   }
+
+  getLobby() {
+    return (
+      // <UserInfo />
+      <Contact />
+    );
+  }
+
   render() {
     return (
       <div>
         <Header />
         <div className='container'>
-          {this.props.loginInfo.isLogged ? <UserInfo /> : this.notLoggedTemplate()}
+          {this.props.loginInfo.isLogged ? this.getLobby() : this.notLoggedTemplate()}
         </div>
         <ToastContainer />
       </div>

@@ -26,7 +26,7 @@ function mapDispatchToProps(dispatch: Dispatch<IUpdateLoginInfo>): ILoginProps {
           dispatch({ type: 'UPDATE_LOGIN_INFO', loginInfo: { isLogged: true, session } });
           success(resp);
         })
-        .catch(error => error(error));
+        .catch(e => error(e));
 
     },
     logout: () => {
