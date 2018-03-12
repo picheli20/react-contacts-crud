@@ -2,7 +2,6 @@ import * as React from 'react';
 import { ToastContainer } from 'react-toastify';
 
 import Header from '../../containers/Header';
-import UserInfo from '../../containers/UserInfo';
 import Contact from '../../containers/Contact';
 import { IUserProps } from '../../actions';
 
@@ -23,7 +22,6 @@ export class Home extends React.Component<IUserProps> {
 
   getLobby() {
     return (
-      // <UserInfo />
       <Contact />
     );
   }

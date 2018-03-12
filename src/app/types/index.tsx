@@ -1,8 +1,8 @@
 import { AxiosInstance } from 'axios';
 
 export interface IStoreState {
-  userInfo: IUserInfo;
   loginInfo: ILoginInfo;
+  createModal: boolean;
 };
 export interface ILoginInfo {
   session?: AxiosInstance;

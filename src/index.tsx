@@ -12,10 +12,10 @@ import { userInfo } from './app/reducers';
 import './index.scss';
 
 const store = createStore<IStoreState>(userInfo, {
-  userInfo: {},
   loginInfo: {
     isLogged: false,
-  }
+  },
+  createModal: false,
 });
 
 // to auth, add this header: Authorization          Basic btoa(username:password)

@@ -9,7 +9,11 @@ function mapStateToProps(state: IUserProps) {
 }
 
 function mapDispatchToProps(dispatch: Dispatch<any>): IUserProps {
-  return { };
+  return {
+    toggleModal: (value: boolean) => {
+      dispatch({ type: 'OPEN_MODAL', value });
+    }
+  };
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Contact);

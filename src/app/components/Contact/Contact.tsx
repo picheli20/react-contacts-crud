@@ -2,14 +2,17 @@ import * as React from 'react';
 import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
 import Dialog from 'material-ui/Dialog';
 import RaisedButton from 'material-ui/RaisedButton';
+import FloatingActionButton from 'material-ui/FloatingActionButton';
+import ContentAdd from 'material-ui/svg-icons/content/add';
 import CircularProgress from 'material-ui/CircularProgress';
 
-import { ILoginProps } from '../../actions';
+import { IUserProps } from '../../actions';
 
 import './Contact.scss';
 import { toast } from 'react-toastify';
+import { UserInfo } from '../UserInfo/UserInfo';
 
-export class Contact extends React.Component<ILoginProps> {
+export class Contact extends React.Component<IUserProps> {
   state = {
     loading: false,
     data: [],
@@ -116,8 +119,18 @@ export class Contact extends React.Component<ILoginProps> {
     );
   }
 
+  // load the data from server when we have loginInfo.session available
   componentWillMount() {
     this.load();
+  }
+
+  toggle(value: boolean = !this.props.createModal) {
+    this.props.toggleModal(value);
+  }
+
+  create(data: any) {
+    console.log(data);
+    this.toggle(false);
   }
 
   render() {
@@ -125,6 +138,19 @@ export class Contact extends React.Component<ILoginProps> {
       <div>
         { this.state.loading ? this.loading() : this.list()}
         { this.confirm() }
+
+        <UserInfo
+          isOpen={this.props.createModal}
+          onClose={() => this.toggle(false)}
+          onSubmit={data => this.create(data)}
+        />
+        <FloatingActionButton
+          className='create-button'
+          secondary={true}
+          onClick={() => this.toggle()}
+        >
+          <ContentAdd />
+        </FloatingActionButton>
       </div>
     );
   }

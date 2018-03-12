@@ -4,8 +4,16 @@ import * as constants from '../constants';
 export interface IUserProps {
   onSubmit?: () => void;
   fieldChange?: (value: string, key: string) => any;
+  toggleModal?: (value: boolean) => void;
   userInfo?: IUserInfo;
   loginInfo?: ILoginInfo;
+  createModal?: boolean;
+}
+
+export interface IModalProps {
+  isOpen?: boolean;
+  onClose?: () => void;
+  onSubmit?: (data: any) => void;
 }
 
 export interface ILoginProps {
@@ -14,10 +22,9 @@ export interface ILoginProps {
   loginInfo?: ILoginInfo;
 }
 
-export interface IUpdateUserInfo {
-  type: constants.UPDATE_USER_INFO;
-  key: string;
-  value: any;
+export interface IToggleModal {
+  type: constants.OPEN_MODAL;
+  value: boolean;
 }
 
 export interface IUpdateLoginInfo {
@@ -25,4 +32,4 @@ export interface IUpdateLoginInfo {
   loginInfo: ILoginInfo;
 }
 
-export type UserInfoAction = IUpdateUserInfo | IUpdateLoginInfo;
+export type UserInfoAction =  IUpdateLoginInfo | IToggleModal;
