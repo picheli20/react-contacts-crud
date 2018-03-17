@@ -1,3 +1,16 @@
-.form-item {
-  max-width: 33%;
+.field {
+  margin: 5px;
+  max-width: calc(33% - 10px);
+  min-width: calc(33% - 10px);
+}
+
+.field-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.action-buttons {
+  display: flex;
+  flex-direction: row-reverse;
 }

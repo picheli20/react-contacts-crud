@@ -1,64 +1,31 @@
 import * as React from 'react';
 import RaisedButton from 'material-ui/RaisedButton';
+import Dialog from 'material-ui/Dialog';
+import MenuItem from 'material-ui/MenuItem';
 import TextField from 'material-ui/TextField';
 import {RadioButton, RadioButtonGroup} from 'material-ui/RadioButton';
-import Dialog from 'material-ui/Dialog';
+import { TextValidator, ValidatorForm, SelectValidator } from 'react-material-ui-form-validator';
 
-import { IUserInfo, IStoreState } from '../../types';
+import { IUserInfo, IStoreState, IAddress } from '../../types';
 import { IModalProps } from '../../actions';
+import { fields, IField } from './UserInfo-config';
 
 import './UserInfo.scss';
 
-// post example
-// {
-//   userInfo: {
-//     "name": "Joao Silva",
-//     "cpf": "12312312312312",
-//     "gender": "m",
-//     "website": "www.test.com",
-//     "email": "test@test.com",
-//     "telephone": "+55 11 9930 1251"
-//   },
-//   "address": {
-//     "streetName": "Rua Test",
-//     "streetNumber": 123,
-//     "neighborhood": "Bairro",
-//     "complement": "Edificio B",
-//     "zip": "05345-000",
-//     "city": "São Paulo",
-//     "state": "São Paulo",
-//     "country": "Brazil"
-//   }
-// }
-
-
 export class UserInfo extends React.Component<IModalProps> {
+  userInfo: IUserInfo = {};
+  address: IAddress = {};
+
   state = {
     isCompany: false,
     data: [],
     loading: false,
-    userInfo: {
-      name: null,
-      cpf: null,
-      cnpj: null,
-      gender: null,
-      website: null,
-      email: null,
-      telephone: null
-    },
-    address: {
-      streetName: null,
-      streetNumber: null,
-      neighborhood: null,
-      complement: null,
-      zip: null,
-      city: null,
-      state: null,
-      country: null
-    },
+    userInfo: this.userInfo,
+    address: this.address,
   };
 
   setValue(value: any, key: string, obj?: string) {
+    console.log('set value', value);
     if (obj) {
       this.state[obj][key] = value;
     } else {
@@ -68,148 +35,81 @@ export class UserInfo extends React.Component<IModalProps> {
     this.setState({ ...this.state});
   }
 
+  handleSubmit(a: any) {
+    console.log(a);
+  }
+
+  componentWillMount() {
+    console.log(this.props);
+  }
+
+  buildForm(type: string, fieldMap: IField[]) {
+    return fieldMap.map((item: IField, index: number) => {
+      // don't show not visible fields
+      if (!item.visible) {
+        return;
+      }
+
+      const props = {
+        key: index,
+        className: 'field',
+        floatingLabelText: item.label,
+        onChange: event => this.setValue(event.target.value, item.name, type),
+        name: item.name,
+        value: this.state[type][item.name],
+        validators: item.validators,
+        errorMessages: item.errorMessages,
+      };
+
+      switch (item.type) {
+        case 'text':
+          return (<TextValidator {...props} />);
+        case 'select':
+        return (<SelectValidator {...props} onChange={(event, index, value) => this.setValue(value, item.name, type)}>
+          {item.options.map((item, i) => <MenuItem key={i} value={item.value} primaryText={item.label}/>)}
+        </SelectValidator>);
+      }
+    });
+  }
+
   getForm() {
-    let { userInfo, address } = this.state;
-    let extraFields = (
-      <TextField
-        floatingLabelText='CPF'
-        className='form-item'
-        value={userInfo.cpf}
-        onChange={event => this.setValue(event.target.value, 'cpf', 'userInfo')}
-      />
-    );
-
-    if (this.state.isCompany) {
-      extraFields = (
-        <TextField
-          floatingLabelText='CNPJ'
-          className='form-item'
-          value={userInfo.cnpj}
-          onChange={event => this.setValue(event.target.value, 'cnpj', 'userInfo')}
-        />
-      );
-    }
-
+    console.log(this.state.address);
+    const type = 'company'; // user
     return (
-      <div>
-        <h1>Informacoes Pessoais</h1>
-        <TextField
-          className='form-item'
-          floatingLabelText='Nome'
-          value={userInfo.name}
-          onChange={event => this.setValue(event.target.value, 'name', 'userInfo')}
-        />
-        {extraFields}
-        <RadioButtonGroup
-          name='shipSpeed'
-          defaultSelected='m'
-          onChange={event => console.log(event.target.value, 'website', 'userInfo')}>
-          <RadioButton
-            value='m'
-            label='Homem'
-          />
-          <RadioButton
-            value='f'
-            label='Mulher'
-          />
-        </RadioButtonGroup>
-        <TextField
-          className='form-item'
-          floatingLabelText='Website'
-          value={userInfo.website}
-          onChange={event => this.setValue(event.target.value, 'website', 'userInfo')}
-        />
-        <TextField
-          className='form-item'
-          floatingLabelText='E-mail'
-          value={userInfo.email}
-          onChange={event => this.setValue(event.target.value, 'email', 'userInfo')}
-        />
-        <TextField
-          className='form-item'
-          floatingLabelText='Website'
-          value={userInfo.website}
-          onChange={event => this.setValue(event.target.value, 'website', 'userInfo')}
-        />
-        <TextField
-          className='form-item'
-          floatingLabelText='Website'
-          value={userInfo.telephone}
-          onChange={event => this.setValue(event.target.value, 'telephone', 'userInfo')}
-        />
-        <h1>Endereco</h1>
-        <TextField
-          className='form-item'
-          floatingLabelText='Rua'
-          value={address.streetName}
-          onChange={event => this.setValue(event.target.value, 'streetName', 'address')}
-        />
-        <TextField
-          className='form-item'
-          floatingLabelText='Numero'
-          value={address.streetNumber}
-          onChange={event => this.setValue(event.target.value, 'streetNumber', 'address')}
-        />
-        <TextField
-          className='form-item'
-          floatingLabelText='Bairro'
-          value={address.neighborhood}
-          onChange={event => this.setValue(event.target.value, 'neighborhood', 'address')}
-        />
-        <TextField
-          className='form-item'
-          floatingLabelText='Complemento'
-          value={address.complement}
-          onChange={event => this.setValue(event.target.value, 'complement', 'address')}
-        />
-        <TextField
-          className='form-item'
-          floatingLabelText='CEP'
-          value={address.zip}
-          onChange={event => this.setValue(event.target.value, 'zip', 'address')}
-        />
-        <TextField
-          className='form-item'
-          floatingLabelText='Cidade'
-          value={address.city}
-          onChange={event => this.setValue(event.target.value, 'city', 'address')}
-        />
-        <TextField
-          className='form-item'
-          floatingLabelText='Estado'
-          value={address.state}
-          onChange={event => this.setValue(event.target.value, 'state', 'address')}
-        />
-        <TextField
-          className='form-item'
-          floatingLabelText='Pais'
-          value={address.country}
-          onChange={event => this.setValue(event.target.value, 'country', 'address')}
-        />
-      </div>
+      <ValidatorForm onSubmit={this.handleSubmit} >
+        <h4>Infos</h4>
+        <div className='field-wrapper'>
+          {this.buildForm('userInfo', fields.userInfo[type])}
+        </div>
+        <h4>Endereco</h4>
+        <div className='field-wrapper'>
+          {this.buildForm('address', fields.address as IField[])}
+        </div>
+        <div className='action-buttons'>
+          <RaisedButton
+            label='Cancelar'
+            primary={true}
+            disabled={this.state.loading}
+            onClick={() => this.props.onClose()} />
+
+          <RaisedButton
+            label='Adicionar'
+            type='submit'
+            disabled={this.state.loading} />
+        </div>
+      </ValidatorForm>
     );
   }
 
-  getDialog() {
-    console.log(this.props);
-
-    const actions = [
-      <RaisedButton
-        label='Cancelar'
-        primary={true}
-        disabled={this.state.loading}
-        onClick={() => this.props.onClose()}
-      />,
-      <RaisedButton
-        label='Save'
-        disabled={this.state.loading}
-        onClick={() => this.props.onSubmit(this.state.userInfo)}
-      />,
-    ];
+  render() {
+    const customContentStyle = {
+      width: '90%',
+      maxWidth: 'none',
+    };
 
     return (
       <Dialog
-        actions={actions}
+        contentStyle={customContentStyle}
         modal={true}
         autoScrollBodyContent={true}
         open={this.props.isOpen}
@@ -217,10 +117,6 @@ export class UserInfo extends React.Component<IModalProps> {
         {this.getForm()}
       </Dialog>
     );
-  }
-
-  render() {
-    return this.getDialog();
   }
 }
 
