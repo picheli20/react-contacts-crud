@@ -8,6 +8,8 @@ import Dialog from 'material-ui/Dialog';
 import TextField from 'material-ui/TextField';
 import { toast } from 'react-toastify';
 
+import { TextValidator, ValidatorForm } from 'react-material-ui-form-validator';
+
 import { ILoginProps } from '../../actions';
 import { authenticatorStorage } from '../../constants';
 
@@ -65,40 +67,47 @@ export class Header extends React.Component<ILoginProps> {
   }
 
   getDialog() {
-    const actions = [
-      <RaisedButton
-        secondary={true}
-        label='Login'
-        onClick={() => this.login()}
-        disabled={!this.state.username || !this.state.password || this.state.loading } />,
-    ];
-
     return (
       <Dialog
         title='Login'
-        actions={actions}
         modal={false}
         contentStyle={modalSm}
         open={this.state.open}
         onRequestClose={this.handleClose}
       >
-        <div className='form-dialog'>
-          <TextField
+      <ValidatorForm
+        instantValidate
+        className='form-dialog'
+        ref='form'
+        onSubmit={() => this.login()}>
+
+          <TextValidator
             floatingLabelText='Email'
+            name='email'
             value={this.state.username}
             style={{ width: '100%' }}
-            errorText={!this.state.username && 'Este campo é obrigatório'}
+            validators={['required']}
+            errorMessages={['Este campo é obrigatório']}
             onChange={event => this.setValue(event.target.value, 'username')}
           />
-          <TextField
-            type='password'
+          <TextValidator
             floatingLabelText='Password'
+            name='password'
+            type='password'
             value={this.state.password}
             style={{ width: '100%' }}
-            errorText={!this.state.password && 'Este campo é obrigatório'}
+            validators={['required']}
+            errorMessages={['Este campo é obrigatório']}
             onChange={event => this.setValue(event.target.value, 'password')}
           />
-        </div>
+
+          <RaisedButton
+            className='submit-buttom'
+            secondary={true}
+            type='submit'
+            label='Login'
+            disabled={this.state.loading} />
+        </ValidatorForm>
       </Dialog>
     );
   }
