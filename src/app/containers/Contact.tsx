@@ -2,7 +2,7 @@ import { Dispatch, connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import { IUserProps } from '../actions';
-import { Contact } from '../components/Contact/Contact';
+import Contact from '../components/Contact/Contact';
 
 function mapStateToProps(state: IUserProps) {
   return { ...state };

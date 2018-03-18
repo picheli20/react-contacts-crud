@@ -36,3 +36,14 @@ export interface IContact {
   address: IAddress;
   id: string;
 };
+
+export interface IContactList {
+  userInfo: IUserInfo;
+  address: IAddress;
+  id: string;
+  expanded: boolean;
+  location: {
+    lat: number,
+    lng: number,
+  };
+};

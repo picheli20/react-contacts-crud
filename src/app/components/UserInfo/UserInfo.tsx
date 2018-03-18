@@ -137,7 +137,7 @@ export class UserInfo extends React.Component<IModalProps> {
     switch (currentStep) {
       case 'userInfo':
         fieldMap = fields.userInfo[type];
-        title = 'Infos';
+        title = 'Informações';
         break;
       case 'address':
         fieldMap = fields.address as IField[];

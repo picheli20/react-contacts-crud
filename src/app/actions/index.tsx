@@ -8,6 +8,7 @@ export interface IUserProps {
   userInfo?: IUserInfo;
   loginInfo?: ILoginInfo;
   createModal?: boolean;
+  google?: any;
 }
 
 export interface IModalProps {

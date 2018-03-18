@@ -45,3 +45,9 @@
   text-align: center;
   margin: 20px;
 }
+
+.map-container {
+  position: relative;
+  height: 200px;
+  padding: 0 !important; /* not sure if that's the best way to overwrite the default values */
+}

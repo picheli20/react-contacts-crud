@@ -1,4 +1,5 @@
 import * as React from 'react';
+import {Map, InfoWindow, Marker, GoogleApiWrapper} from 'google-maps-react';
 import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
 import Dialog from 'material-ui/Dialog';
 import RaisedButton from 'material-ui/RaisedButton';
@@ -13,7 +14,7 @@ import UserIcon from 'material-ui/svg-icons/action/accessibility';
 
 import { UserInfo } from '../UserInfo/UserInfo';
 import { IUserProps } from '../../actions';
-import { IContact } from '../../types';
+import { IContact, IContactList } from '../../types';
 
 import './Contact.scss';
 
@@ -120,6 +121,28 @@ export class Contact extends React.Component<IUserProps> {
     );
   }
 
+  fetchMap(item: IContactList, mapProps: any, map: any) {
+    const {google} = mapProps;
+    const geocoder = new google.maps.Geocoder();
+
+    geocoder.geocode({
+      'address': `${item.address.streetName} ${item.address.streetNumber} - ${item.address.city}/ ${item.address.state}  ${item.address.country}`
+    }, (results: any, status: any) => {
+      if (status === google.maps.GeocoderStatus.OK) {
+        item.location = {
+          lat: results[0].geometry.location.lat(),
+          lng:  results[0].geometry.location.lng(),
+        };
+
+        // add the custom market on the address
+        new google.maps.Marker({ map, position: item.location });
+
+        // center map
+        map.panTo(new google.maps.LatLng(item.location.lat, item.location.lng));
+      }
+    });
+  }
+
   list() {
     if (this.state.data.length === 0) {
       return (<div>
@@ -127,32 +150,42 @@ export class Contact extends React.Component<IUserProps> {
       </div>);
     }
 
-    return this.state.data.map(item => (
+    return this.state.data.map((item: IContactList) => (
       <Card expanded={item.expanded} onExpandChange={expanded => item.expanded = expanded} key={item.id}>
         <CardHeader
           className='cardheader'
-          title={item.userInfo.name}
-          subtitle={item.userInfo.telephone}
-          avatar={`assets/${item.userInfo.gender || 'company'}.png`}
+          title={`${item.userInfo.name}`}
+          subtitle={`Telefone: ${item.userInfo.telephone} | Email: ${item.userInfo.email} ${ item.userInfo.cpf ? `| CPF: ${item.userInfo.cpf}` : `| CNPJ: ${item.userInfo.cnpj}`}`}
+            avatar={`assets/${item.userInfo.gender || 'company'}.png`}
           actAsExpander={true}
           showExpandableButton={true}
         />
-        {/* <CardMedia
-          expandable={true}
-          overlay={<CardTitle title='Overlay title' subtitle='Overlay subtitle' />}
-        >
-          <img src='images/nature-600-337.jpg' alt='' />
-        </CardMedia> */}
-        {/* <CardTitle title='Card title' subtitle='Card subtitle' expandable={true} /> */}
-        <CardText expandable={true}>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-          Donec mattis pretium massa. Aliquam erat volutpat. Nulla facilisi.
-          Donec vulputate interdum sollicitudin. Nunc lacinia auctor quam sed pellentesque.
-          Aliquam dui mauris, mattis quis lacus id, pellentesque lobortis odio.
+        <CardText expandable={true} className='map-container'>
+          <Map zoom={13} google={this.props.google} onReady={(mapProps, map) => this.fetchMap(item, mapProps, map)}>
+
+            {
+              item.location ?
+              <Marker
+                title={'The marker`s title will appear as a tooltip.'}
+                name={'SOMA'}
+                position={item.location} /> : console.log('no item.location for', item.userInfo.name)
+            }
+          </Map>
         </CardText>
         <CardActions expandable={true} className='actions'>
-          <RaisedButton primary={true} label='Edit' onClick={() => this.toggle(true, item.userInfo.cpf ? 'user' : 'company', item)} />
-          <RaisedButton label='Delete' onClick={() => this.setValue(item.id, 'delete')} />
+          { item.userInfo.website ?
+            <RaisedButton
+              label='Website'
+              onClick={
+                () =>
+                  window.open(
+                    item.userInfo.website.startsWith('http') ?
+                      item.userInfo.website :
+                      `http://${item.userInfo.website}`
+                  , '_blank')} />
+              : '' }
+          <RaisedButton label='Edit' onClick={() => this.toggle(true, item.userInfo.cpf ? 'user' : 'company', item)} />
+          <RaisedButton secondary={true} label='Delete' onClick={() => this.setValue(item.id, 'delete')} />
         </CardActions>
       </Card>
     ));
@@ -202,3 +235,6 @@ export class Contact extends React.Component<IUserProps> {
     );
   }
 }
+export default GoogleApiWrapper({
+  apiKey: 'AIzaSyALby8WL_qnOlBZEo5dr7jp_7z0DnJtd78',
+})(Contact);
