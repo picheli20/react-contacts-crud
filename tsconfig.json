@@ -6,6 +6,10 @@
     "experimentalDecorators": true,
     "removeComments": false,
     "noImplicitAny": false,
+    "lib": [
+        "dom",
+        "es2017"
+    ],
     "typeRoots": ["node_modules/@types/"],
     "types": [
       "react-router",
@@ -14,7 +18,7 @@
       "react-addons-test-utils",
       "jasmine",
       "es6-shim"
-    ]
+    ],
   },
   "compileOnSave": false,
   "filesGlob": [

@@ -13,9 +13,6 @@ export class Home extends React.Component<IUserProps> {
     return (
       <div className='not-logged text-center'>
         <img src='../../../assets/sadpanda.png'/>
-        <div className='description'>
-          Você precisa estar logado
-        </div>
       </div>
     );
   }
