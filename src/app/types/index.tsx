@@ -30,3 +30,9 @@ export interface IAddress {
   state?: string;
   country?: string;
 };
+
+export interface IContact {
+  userInfo: IUserInfo;
+  address: IAddress;
+  id: string;
+};

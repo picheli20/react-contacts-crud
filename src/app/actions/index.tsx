@@ -1,4 +1,4 @@
-import { IUserInfo, ILoginInfo } from '../types/';
+import { IUserInfo, ILoginInfo, IContact } from '../types/';
 import * as constants from '../constants';
 
 export interface IUserProps {
@@ -13,8 +13,9 @@ export interface IUserProps {
 export interface IModalProps {
   isOpen?: boolean;
   onClose?: () => void;
-  onSubmit?: (data: any) => void;
+  onSubmit?: (data: any, id?: string) => void;
   type?: string;
+  edit?: IContact;
 }
 
 export interface ILoginProps {

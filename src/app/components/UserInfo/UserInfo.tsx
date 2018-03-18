@@ -27,7 +27,16 @@ export class UserInfo extends React.Component<IModalProps> {
     steps: ['userInfo', 'address'],
     currentStep: 'userInfo',
     validation: {},
+    id: null,
   };
+
+  componentWillMount() {
+    if (this.props.edit) {
+      this.setValue(this.props.edit.address, 'address');
+      this.setValue(this.props.edit.userInfo, 'userInfo');
+      this.setValue(this.props.edit.id, 'id');
+    }
+  }
 
   setValue(value: any, key: string, obj?: string) {
     // parse to int the streetNumber
@@ -58,7 +67,7 @@ export class UserInfo extends React.Component<IModalProps> {
     this.props.onSubmit({
       userInfo: this.state.userInfo,
       address: this.state.address,
-    });
+    }, this.state.id);
   }
 
   searchZip(name: string, type: string) {
@@ -91,7 +100,7 @@ export class UserInfo extends React.Component<IModalProps> {
       }
 
       const props: any = {
-        key: index,
+        key: `${type}-${index}`,
         className: 'field',
         floatingLabelText: item.label,
         onChange: event => this.setValue(event.target.value, item.name, type),
@@ -164,7 +173,7 @@ export class UserInfo extends React.Component<IModalProps> {
 
           <RaisedButton
             className='button'
-            label={isLastStep ? 'Adicionar' : 'Próximo'}
+            label={isLastStep ? (this.state.id ? 'Editar' : 'Adicionar') : 'Próximo'}
             type='submit' />
         </div>
       </ValidatorForm>

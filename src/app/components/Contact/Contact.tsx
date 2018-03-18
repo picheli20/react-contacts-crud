@@ -4,23 +4,25 @@ import Dialog from 'material-ui/Dialog';
 import RaisedButton from 'material-ui/RaisedButton';
 import FloatingActionButton from 'material-ui/FloatingActionButton';
 import CircularProgress from 'material-ui/CircularProgress';
+import { toast } from 'react-toastify';
 
 // icons
 import AddIcon from 'material-ui/svg-icons/content/add';
 import CompanyIcon from 'material-ui/svg-icons/communication/business';
 import UserIcon from 'material-ui/svg-icons/action/accessibility';
 
+import { UserInfo } from '../UserInfo/UserInfo';
 import { IUserProps } from '../../actions';
+import { IContact } from '../../types';
 
 import './Contact.scss';
-import { toast } from 'react-toastify';
-import { UserInfo } from '../UserInfo/UserInfo';
 
 export class Contact extends React.Component<IUserProps> {
   state = {
     loading: false,
     data: [],
     delete: null,
+    editing: null,
     type: null, // type of the form, can be: 'user' or 'company'
     menuOpen: false,
   };
@@ -54,21 +56,21 @@ export class Contact extends React.Component<IUserProps> {
 
   }
 
-  create(data: any) {
+  handleFormSubmit(data: IContact, id: string) {
     this.setValue(true, 'loading');
-    this.props.loginInfo.session.post('/contacts', data).then(resp => {
+
+    let request;
+
+    if (id) {
+      request = this.props.loginInfo.session.put(`/contacts/${id}`, data);
+    } else {
+      request = this.props.loginInfo.session.post('/contacts', data);
+    }
+
+    request.then(resp => {
       this.toggle(false);
       this.load();
-    }).catch(e => toast.error(`Algo inesperado ocorreu ao tentar criar ${data.userInfo.name}`));
-  }
-
-  edit(data: any) {
-    this.setValue(true, 'loading');
-    this.props.loginInfo.session.put('/contacts', data).then(resp => {
-      this.toggle(false);
-      this.setValue(false, 'loading');
-      this.setValue(resp.data, 'data');
-    }).catch(e => toast.error(`Algo inesperado ocorreu ao tentar editar ${data.userInfo.name}`));
+    }).catch(e => toast.error(`Algo inesperado ocorreu ao tentar ${id ? 'editar' : 'criar'}: ${data.userInfo.name}`));
   }
 
   // load the data from server when we have loginInfo.session available
@@ -76,9 +78,10 @@ export class Contact extends React.Component<IUserProps> {
     this.load();
   }
 
-  toggle(value: boolean = !this.props.createModal, type?: 'user' | 'company') {
+  toggle(value: boolean = !this.props.createModal, type?: 'user' | 'company', editing?: IContact) {
     this.setValue(type, 'type');
     this.setValue(false, 'menuOpen');
+    this.setValue(editing, 'editing');
     this.props.toggleModal(value);
   }
 
@@ -118,8 +121,13 @@ export class Contact extends React.Component<IUserProps> {
   }
 
   list() {
+    if (this.state.data.length === 0) {
+      return (<div>
+        <div className='no-items'>Você ainda não tem nada cadastrado</div>
+      </div>);
+    }
 
-    const itemList = this.state.data.map(item => (
+    return this.state.data.map(item => (
       <Card expanded={item.expanded} onExpandChange={expanded => item.expanded = expanded} key={item.id}>
         <CardHeader
           className='cardheader'
@@ -143,15 +151,11 @@ export class Contact extends React.Component<IUserProps> {
           Aliquam dui mauris, mattis quis lacus id, pellentesque lobortis odio.
         </CardText>
         <CardActions expandable={true} className='actions'>
-          <RaisedButton primary={true} label='Edit' />
+          <RaisedButton primary={true} label='Edit' onClick={() => this.toggle(true, item.userInfo.cpf ? 'user' : 'company', item)} />
           <RaisedButton label='Delete' onClick={() => this.setValue(item.id, 'delete')} />
         </CardActions>
       </Card>
     ));
-
-    return (
-      <div> {itemList} </div>
-    );
   }
 
   render() {
@@ -168,7 +172,8 @@ export class Contact extends React.Component<IUserProps> {
             <UserInfo
             isOpen={this.props.createModal}
             onClose={() => this.toggle(false)}
-            onSubmit={data => this.create(data)}
+            onSubmit={(data, id) => this.handleFormSubmit(data, id)}
+            edit={this.state.editing}
             type={this.state.type}
           /> : <span></span>
         }
