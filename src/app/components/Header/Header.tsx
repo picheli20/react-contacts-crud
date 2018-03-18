@@ -9,6 +9,7 @@ import TextField from 'material-ui/TextField';
 import { toast } from 'react-toastify';
 
 import { ILoginProps } from '../../actions';
+import { authenticatorStorage } from '../../constants';
 
 import './Header.scss';
 
@@ -28,6 +29,14 @@ export class Header extends React.Component<ILoginProps> {
 
   handleClose = () => this.setState({open: false});
 
+  // load the data from server when we have loginInfo.session available
+  componentWillMount() {
+    const authenticator = localStorage.getItem(authenticatorStorage);
+    if (authenticator) {
+      this.login(authenticator);
+    }
+  }
+
   success() {
     this.setValue(false, 'loading');
     this.handleClose();
@@ -45,9 +54,9 @@ export class Header extends React.Component<ILoginProps> {
 
   logout = () => this.props.logout();
 
-  login() {
+  login(authenticator: string = btoa(`${this.state.username}:${this.state.password}`)) {
     this.setValue(true, 'loading');
-    this.props.login(this.state.username, this.state.password, () => this.success(), error => this.error(error));
+    this.props.login(authenticator, () => this.success(), error => this.error(error));
   }
 
   setValue(value: any, key: string) {

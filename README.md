@@ -18,3 +18,10 @@ npm install
 ```
 npm run serve
 ```
+
+## TODO
+
+- Encapsulate the `localStorate` inside some service to be easiser to maintain
+- Unit tests!!! -- sorry :(
+- Break Contact component in small parts
+- Figure out a way to organize this project better (where will be the constants, http interfaces)

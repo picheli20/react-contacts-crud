@@ -8,3 +8,5 @@ export type UPDATE_LOGIN_INFO = typeof UPDATE_LOGIN_INFO;
 
 export const OPEN_MODAL = 'OPEN_MODAL';
 export type OPEN_MODAL = typeof OPEN_MODAL;
+
+export const authenticatorStorage = 'authenticator';

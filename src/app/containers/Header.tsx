@@ -6,7 +6,7 @@ import { toast } from 'react-toastify';
 import { ILoginProps, IUpdateLoginInfo } from '../actions';
 import { ILoginInfo } from '../types/index';
 import { Header } from '../components/Header/Header';
-import { BASE_URL } from '../constants';
+import { BASE_URL, authenticatorStorage } from '../constants';
 
 function mapStateToProps(state: ILoginProps) {
   return { ...state };
@@ -14,8 +14,7 @@ function mapStateToProps(state: ILoginProps) {
 
 function mapDispatchToProps(dispatch: Dispatch<IUpdateLoginInfo>): ILoginProps {
   return {
-    login: (username: string, password: string, success: Function, error: Function) => {
-      const authenticator = btoa(`${username}:${password}`);
+    login: (authenticator: string, success: Function, error: Function) => {
       const session = axios.create({
         baseURL: BASE_URL,
         headers: {
@@ -26,6 +25,7 @@ function mapDispatchToProps(dispatch: Dispatch<IUpdateLoginInfo>): ILoginProps {
 
       session.get('/auth')
         .then(resp => {
+          localStorage.setItem(authenticatorStorage, authenticator);
           dispatch({ type: 'UPDATE_LOGIN_INFO', loginInfo: { isLogged: true, session } });
           success(resp);
         })
@@ -33,6 +33,7 @@ function mapDispatchToProps(dispatch: Dispatch<IUpdateLoginInfo>): ILoginProps {
 
     },
     logout: () => {
+      localStorage.removeItem(authenticatorStorage);
       dispatch({ type: 'UPDATE_LOGIN_INFO', loginInfo: { isLogged: false } });
     }
   };

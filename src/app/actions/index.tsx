@@ -20,7 +20,7 @@ export interface IModalProps {
 }
 
 export interface ILoginProps {
-  login?: (username: string, password: string, success: Function, error: Function) => void;
+  login?: (authenticator: string, success: Function, error: Function) => void;
   logout?: () => void;
   loginInfo?: ILoginInfo;
 }
