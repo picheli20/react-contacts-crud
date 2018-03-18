@@ -21,16 +21,12 @@ function mapDispatchToProps(dispatch: Dispatch<IUpdateLoginInfo>): ILoginProps {
         headers: {'Authorization': `Basic ${authenticator}`}
       });
 
-      // todo: remove this when it's done
-      dispatch({ type: 'UPDATE_LOGIN_INFO', loginInfo: { isLogged: true, session } });
-      success();
-
-      // session.get('/auth')
-      //   .then(resp => {
-      //     dispatch({ type: 'UPDATE_LOGIN_INFO', loginInfo: { isLogged: true, session } });
-      //     success(resp);
-      //   })
-      //   .catch(e => error(e));
+      session.get('/auth')
+        .then(resp => {
+          dispatch({ type: 'UPDATE_LOGIN_INFO', loginInfo: { isLogged: true, session } });
+          success(resp);
+        })
+        .catch(e => error(e));
 
     },
     logout: () => {
