@@ -54,15 +54,12 @@ export class Header extends React.Component<ILoginProps> {
 
   logout = () => this.props.logout();
 
-  login(authenticator: string = btoa(`${this.state.username}:${this.state.password}`)) {
+  login(authenticator: string = btoa(`${this.state.username.toLowerCase()}:${this.state.password}`)) {
     this.setValue(true, 'loading');
     this.props.login(authenticator, () => this.success(), error => this.error(error));
   }
 
   setValue(value: any, key: string) {
-    if (key === 'username') {
-      key = key.toLowerCase();
-    }
     this.state[key] = value;
     this.setState({ ...this.state});
   }

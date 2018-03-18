@@ -8,7 +8,7 @@
 }
 
 .create-button {
-  position: absolute;
+  position: fixed;
   left: 10px;
   bottom: 10px;
   z-index: 2;
@@ -16,7 +16,7 @@
 
 
 .create-button-sub {
-  position: absolute;
+  position: fixed;
   left: 18px;
   bottom: 18px;
 }
@@ -31,7 +31,7 @@
   }
 
   &.create-button {
-    transform: rotate(45deg);
+    transform: rotate(225deg);
   }
 }
 
@@ -50,4 +50,23 @@
   position: relative;
   height: 200px;
   padding: 0 !important; /* not sure if that's the best way to overwrite the default values */
+}
+
+.info-items {
+  display: flex;
+  justify-content: space-evenly;
+  flex-wrap: wrap;
+
+  .info-item {
+    margin: 5px;
+
+    .info-item-title {
+      font-weight: bold;
+    }
+
+    .info-item-value {
+      white-space: nowrap;
+    }
+  }
+
 }

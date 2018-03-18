@@ -155,11 +155,50 @@ export class Contact extends React.Component<IUserProps> {
         <CardHeader
           className='cardheader'
           title={`${item.userInfo.name}`}
-          subtitle={`Telefone: ${item.userInfo.telephone} | Email: ${item.userInfo.email} ${ item.userInfo.cpf ? `| CPF: ${item.userInfo.cpf}` : `| CNPJ: ${item.userInfo.cnpj}`}`}
             avatar={`assets/${item.userInfo.gender || 'company'}.png`}
           actAsExpander={true}
           showExpandableButton={true}
         />
+        <CardText expandable={true}>
+          <div className='info-items'>
+            <div className='info-item'>
+              <div className='info-item-title'>Telefone</div>
+              <div className='info-item-value'>{ item.userInfo.telephone }</div>
+            </div>
+            <div className='info-item'>
+              <div className='info-item-title'>Email</div>
+              <div className='info-item-value'>{ item.userInfo.email }</div>
+            </div>
+            <div className='info-item'>
+              <div className='info-item-title'>{ item.userInfo.cpf ? `CPF` : `CNPJ` }</div>
+              <div className='info-item-value'>{ item.userInfo.cpf || item.userInfo.cnpj }</div>
+            </div>
+            <div className='info-item'>
+              <div className='info-item-title'>Cidade</div>
+              <div className='info-item-value'>{`${item.address.city}` }</div>
+            </div>
+            <div className='info-item'>
+              <div className='info-item-title'>Estado</div>
+              <div className='info-item-value'>{`${item.address.state}` }</div>
+            </div>
+            <div className='info-item'>
+              <div className='info-item-title'>País</div>
+              <div className='info-item-value'>{`${item.address.country}` }</div>
+            </div>
+            <div className='info-item'>
+              <div className='info-item-title'>Endereco</div>
+              <div className='info-item-value'>{ `${item.address.streetName} ${item.address.streetNumber}` }</div>
+            </div>
+            <div className='info-item'>
+              <div className='info-item-title'>Complemento</div>
+              <div className='info-item-value'>{ item.address.complement || 'N/A' }</div>
+            </div>
+            <div className='info-item'>
+              <div className='info-item-title'>Cep</div>
+              <div className='info-item-value'>{ item.address.zip }</div>
+            </div>
+          </div>
+        </CardText>
         <CardText expandable={true} className='map-container'>
           <Map zoom={13} google={this.props.google} onReady={(mapProps, map) => this.fetchMap(item, mapProps, map)}>
 
