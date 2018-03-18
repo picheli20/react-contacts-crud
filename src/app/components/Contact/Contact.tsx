@@ -3,8 +3,12 @@ import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'mat
 import Dialog from 'material-ui/Dialog';
 import RaisedButton from 'material-ui/RaisedButton';
 import FloatingActionButton from 'material-ui/FloatingActionButton';
-import ContentAdd from 'material-ui/svg-icons/content/add';
 import CircularProgress from 'material-ui/CircularProgress';
+
+// icons
+import AddIcon from 'material-ui/svg-icons/content/add';
+import CompanyIcon from 'material-ui/svg-icons/communication/business';
+import UserIcon from 'material-ui/svg-icons/action/accessibility';
 
 import { IUserProps } from '../../actions';
 
@@ -17,6 +21,8 @@ export class Contact extends React.Component<IUserProps> {
     loading: false,
     data: [],
     delete: null,
+    type: null, // type of the form, can be: 'user' or 'company'
+    menuOpen: false,
   };
 
   setValue(value: any, key: string) {
@@ -46,6 +52,34 @@ export class Contact extends React.Component<IUserProps> {
       toast.success('Deletado');
     }).catch(() => toast.error('Ops! Algo inesperado ocorreu'));
 
+  }
+
+  create(data: any) {
+    this.setValue(true, 'loading');
+    this.props.loginInfo.session.post('/contacts', data).then(resp => {
+      this.toggle(false);
+      this.load();
+    }).catch(e => toast.error(`Algo inesperado ocorreu ao tentar criar ${data.userInfo.name}`));
+  }
+
+  edit(data: any) {
+    this.setValue(true, 'loading');
+    this.props.loginInfo.session.put('/contacts', data).then(resp => {
+      this.toggle(false);
+      this.setValue(false, 'loading');
+      this.setValue(resp.data, 'data');
+    }).catch(e => toast.error(`Algo inesperado ocorreu ao tentar editar ${data.userInfo.name}`));
+  }
+
+  // load the data from server when we have loginInfo.session available
+  componentWillMount() {
+    this.load();
+  }
+
+  toggle(value: boolean = !this.props.createModal, type?: 'user' | 'company') {
+    this.setValue(type, 'type');
+    this.setValue(false, 'menuOpen');
+    this.props.toggleModal(value);
   }
 
   confirm() {
@@ -84,13 +118,14 @@ export class Contact extends React.Component<IUserProps> {
   }
 
   list() {
-    console.log(this.state.delete);
+
     const itemList = this.state.data.map(item => (
       <Card expanded={item.expanded} onExpandChange={expanded => item.expanded = expanded} key={item.id}>
         <CardHeader
+          className='cardheader'
           title={item.userInfo.name}
           subtitle={item.userInfo.telephone}
-          avatar={`assets/${item.userInfo.gender}.png`}
+          avatar={`assets/${item.userInfo.gender || 'company'}.png`}
           actAsExpander={true}
           showExpandableButton={true}
         />
@@ -119,37 +154,44 @@ export class Contact extends React.Component<IUserProps> {
     );
   }
 
-  // load the data from server when we have loginInfo.session available
-  componentWillMount() {
-    this.load();
-  }
-
-  toggle(value: boolean = !this.props.createModal) {
-    this.props.toggleModal(value);
-  }
-
-  create(data: any) {
-    console.log(data);
-    this.toggle(false);
-  }
-
   render() {
+    let buttonOpenClass = '';
+    if (this.state.menuOpen) {
+      buttonOpenClass = 'create-button-open';
+    }
     return (
       <div>
         { this.state.loading ? this.loading() : this.list()}
         { this.confirm() }
-
-        <UserInfo
-          isOpen={this.props.createModal}
-          onClose={() => this.toggle(false)}
-          onSubmit={data => this.create(data)}
-        />
+        {
+          this.props.createModal ?
+            <UserInfo
+            isOpen={this.props.createModal}
+            onClose={() => this.toggle(false)}
+            onSubmit={data => this.create(data)}
+            type={this.state.type}
+          /> : <span></span>
+        }
         <FloatingActionButton
-          className='create-button'
+          className={`create-button ${buttonOpenClass}`}
           secondary={true}
-          onClick={() => this.toggle()}
+          onClick={() => this.setValue(!this.state.menuOpen, 'menuOpen')}
         >
-          <ContentAdd />
+          <AddIcon />
+        </FloatingActionButton>
+        <FloatingActionButton
+          className={`create-button-sub create-button-user ${buttonOpenClass}`}
+          onClick={() => this.toggle(true, 'user')}
+          mini={true}
+        >
+          <UserIcon />
+        </FloatingActionButton>
+        <FloatingActionButton
+          className={`create-button-sub create-button-company ${buttonOpenClass}`}
+          onClick={() => this.toggle(true, 'company')}
+          mini={true}
+        >
+          <CompanyIcon />
         </FloatingActionButton>
       </div>
     );

@@ -18,15 +18,20 @@ function mapDispatchToProps(dispatch: Dispatch<IUpdateLoginInfo>): ILoginProps {
       const authenticator = btoa(`${username}:${password}`);
       const session = axios.create({
         baseURL: BASE_URL,
-        headers: {'Authorization': `Basic ${authenticator}`}
+        headers: {
+          'Authorization': `Basic ${authenticator}`,
+          'Content-Type': 'application/json',
+        }
       });
 
-      session.get('/auth')
-        .then(resp => {
-          dispatch({ type: 'UPDATE_LOGIN_INFO', loginInfo: { isLogged: true, session } });
-          success(resp);
-        })
-        .catch(e => error(e));
+      dispatch({ type: 'UPDATE_LOGIN_INFO', loginInfo: { isLogged: true, session } });
+
+      // session.get('/auth')
+      //   .then(resp => {
+      //     dispatch({ type: 'UPDATE_LOGIN_INFO', loginInfo: { isLogged: true, session } });
+      //     success(resp);
+      //   })
+      //   .catch(e => error(e));
 
     },
     logout: () => {

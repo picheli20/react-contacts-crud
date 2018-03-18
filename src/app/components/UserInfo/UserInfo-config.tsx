@@ -3,24 +3,48 @@ const UserCompanyfields = [
     label: 'Nome',
     type: 'text',
     name: 'name',
-    validators: ['required'],
-    errorMessages: ['Este campo é obrigatório'],
+    validators: [
+      'required',
+      'minStringLength:3',
+      'maxStringLength: 100',
+    ],
+    errorMessages: [
+      'Este campo é obrigatório',
+      'Este campo tem que ter mais que 3 caracteres',
+      'Este campo tem que ter menos que 100 caracteres',
+    ],
     visible: true,
   },
   {
     label: 'CPF',
     type: 'text',
     name: 'cpf',
-    validators: ['required'],
-    errorMessages: ['Este campo é obrigatório'],
+    validators: [
+      'required',
+      'minStringLength:11',
+      'maxStringLength:11',
+    ],
+    errorMessages: [
+      'Este campo é obrigatório',
+      'Este campo tem que ter 11 dígitos',
+      'Este campo tem que ter 11 dígitos',
+    ],
     visible: true,
   },
   {
     label: 'CNPJ',
     type: 'text',
     name: 'cnpj',
-    validators: ['required'],
-    errorMessages: ['Este campo é obrigatório'],
+    validators: [
+      'required',
+      'minStringLength:14',
+      'maxStringLength:14',
+    ],
+    errorMessages: [
+      'Este campo é obrigatório',
+      'Este campo tem que ter 14 dígitos',
+      'Este campo tem que ter 14 dígitos',
+    ],
     visible: true,
   },
   {
@@ -47,8 +71,14 @@ const UserCompanyfields = [
     label: 'Email',
     name: 'email',
     type: 'text',
-    validators: ['required', 'isEmail'],
-    errorMessages: ['Este campo é obrigatório', 'Favor inserir um email válido'],
+    validators: [
+      'required',
+      'isEmail',
+    ],
+    errorMessages: [
+      'Este campo é obrigatório',
+      'Favor inserir um email válido',
+    ],
     visible: true,
   },
   {
@@ -66,8 +96,15 @@ const addressFields = [
     label: 'CEP',
     name: 'zip',
     type: 'text',
-    validators: ['required'],
-    errorMessages: ['Este campo é obrigatório'],
+    validators: [
+      'required',
+      'minStringLength:8',
+    ],
+    errorMessages: [
+      'Este campo é obrigatório',
+      'Este campo tem que ter mais que 8 caracteres',
+    ],
+    onBlurFunction: 'searchZip',
     visible: true,
   },
   {
@@ -82,16 +119,14 @@ const addressFields = [
     label: 'Numero',
     name: 'streetNumber',
     type: 'text',
-    validators: ['required'],
-    errorMessages: ['Este campo é obrigatório'],
-    visible: true,
-  },
-  {
-    label: 'Bairro',
-    name: 'neighborhood',
-    type: 'text',
-    validators: ['required'],
-    errorMessages: ['Este campo é obrigatório'],
+    validators: [
+      'required',
+      'isPositive',
+    ],
+    errorMessages: [
+      'Este campo é obrigatório',
+      'Este campo tem que ser somente números',
+    ],
     visible: true,
   },
   {
@@ -100,6 +135,14 @@ const addressFields = [
     type: 'text',
     validators: [],
     errorMessages: [],
+    visible: true,
+  },
+  {
+    label: 'Bairro',
+    name: 'neighborhood',
+    type: 'text',
+    validators: ['required'],
+    errorMessages: ['Este campo é obrigatório'],
     visible: true,
   },
   {
@@ -114,8 +157,16 @@ const addressFields = [
     label: 'Estado',
     name: 'state',
     type: 'text',
-    validators: ['required'],
-    errorMessages: ['Este campo é obrigatório'],
+    validators: [
+      'required',
+      'minStringLength:2',
+      'maxStringLength:2',
+    ],
+    errorMessages: [
+      'Este campo é obrigatório',
+      'Este campo tem que ter 2 dígitos',
+      'Este campo tem que ter 2 dígitos',
+    ],
     visible: true,
   },
   {
@@ -177,4 +228,5 @@ export interface IField {
   errorMessages: string[];
   visible: boolean;
   options: { label: string, value: string }[];
+  onBlurFunction?: 'searchZip';
 };

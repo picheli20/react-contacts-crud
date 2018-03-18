@@ -14,6 +14,7 @@ export interface IModalProps {
   isOpen?: boolean;
   onClose?: () => void;
   onSubmit?: (data: any) => void;
+  type?: string;
 }
 
 export interface ILoginProps {

@@ -11,4 +11,32 @@
   position: absolute;
   left: 10px;
   bottom: 10px;
+  z-index: 2;
+}
+
+
+.create-button-sub {
+  position: absolute;
+  left: 18px;
+  bottom: 18px;
+}
+
+.create-button-open {
+  &.create-button-user {
+    bottom: 85px;
+  }
+
+  &.create-button-company {
+    bottom: 145px;
+  }
+
+  &.create-button {
+    transform: rotate(45deg);
+  }
+}
+
+.cardheader {
+  img {
+    background-color: transparent !important;
+  }
 }

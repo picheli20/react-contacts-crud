@@ -23,7 +23,7 @@ export interface IUserInfo {
 export interface IAddress {
   streetName?: string;
   streetNumber?: number;
-  neighboorhood?: string;
+  neighborhood?: string;
   complement?: string;
   zip?: string;
   city?: string;

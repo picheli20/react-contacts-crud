@@ -1,4 +1,5 @@
 import * as React from 'react';
+import axios from 'axios';
 import RaisedButton from 'material-ui/RaisedButton';
 import Dialog from 'material-ui/Dialog';
 import MenuItem from 'material-ui/MenuItem';
@@ -11,6 +12,7 @@ import { IModalProps } from '../../actions';
 import { fields, IField } from './UserInfo-config';
 
 import './UserInfo.scss';
+import { IViaCepResp } from '../../types/ViaCep.interface';
 
 export class UserInfo extends React.Component<IModalProps> {
   userInfo: IUserInfo = {};
@@ -22,10 +24,16 @@ export class UserInfo extends React.Component<IModalProps> {
     loading: false,
     userInfo: this.userInfo,
     address: this.address,
+    steps: ['userInfo', 'address'],
+    currentStep: 'userInfo',
+    validation: {},
   };
 
   setValue(value: any, key: string, obj?: string) {
-    console.log('set value', value);
+    // parse to int the streetNumber
+    if (key === 'streetNumber') {
+      value = parseInt(value, 10);
+    }
     if (obj) {
       this.state[obj][key] = value;
     } else {
@@ -35,12 +43,44 @@ export class UserInfo extends React.Component<IModalProps> {
     this.setState({ ...this.state});
   }
 
-  handleSubmit(a: any) {
-    console.log(a);
+  onClose() {
+    this.setState({
+      ...this.state,
+      userInfo: {},
+      address: {},
+      steps: ['userInfo', 'address'],
+      currentStep: 'userInfo',
+    });
+    this.props.onClose();
   }
 
-  componentWillMount() {
-    console.log(this.props);
+  handleSubmit() {
+    this.props.onSubmit({
+      userInfo: this.state.userInfo,
+      address: this.state.address,
+    });
+  }
+
+  searchZip(name: string, type: string) {
+    let zipValue = this.state[type][name];
+
+    if (!zipValue) {
+      return;
+    }
+
+    axios.get(`https://viacep.com.br/ws/${zipValue.replace(/\D/g, '')}/json/`)
+      .then(({ data }: { data: IViaCepResp}) => this.setState({
+        ...this.state,
+        address: {
+          ...this.state.address,
+          neighborhood: data.bairro || this.state.address.neighborhood,
+          streetName: data.logradouro || this.state.address.streetName,
+          complement: data.complemento || this.state.address.complement,
+          city: data.localidade || this.state.address.city,
+          state: data.uf || this.state.address.state,
+        },
+      }))
+      .catch(e => console.error(e));
   }
 
   buildForm(type: string, fieldMap: IField[]) {
@@ -50,7 +90,7 @@ export class UserInfo extends React.Component<IModalProps> {
         return;
       }
 
-      const props = {
+      const props: any = {
         key: index,
         className: 'field',
         floatingLabelText: item.label,
@@ -61,41 +101,71 @@ export class UserInfo extends React.Component<IModalProps> {
         errorMessages: item.errorMessages,
       };
 
+      if (item.onBlurFunction) {
+        props.onBlur = () => this[item.onBlurFunction](item.name, type);
+      }
+
       switch (item.type) {
         case 'text':
-          return (<TextValidator {...props} />);
+          return (
+            <TextValidator {...props} />
+          );
         case 'select':
-        return (<SelectValidator {...props} onChange={(event, index, value) => this.setValue(value, item.name, type)}>
-          {item.options.map((item, i) => <MenuItem key={i} value={item.value} primaryText={item.label}/>)}
-        </SelectValidator>);
+          return (
+            <SelectValidator {...props} onChange={(event, index, value) => this.setValue(value, item.name, type)}>
+              {item.options.map((item, i) => <MenuItem key={i} value={item.value} primaryText={item.label}/>)}
+            </SelectValidator>
+          );
       }
     });
   }
 
+  getCurrentStepForm(currentStep: string) {
+    const type = this.props.type || 'user'; // 'user' as default
+
+    let fieldMap: IField[];
+    let title;
+    switch (currentStep) {
+      case 'userInfo':
+        fieldMap = fields.userInfo[type];
+        title = 'Infos';
+        break;
+      case 'address':
+        fieldMap = fields.address as IField[];
+        title = 'Endereco';
+        break;
+    }
+
+    return <div className='field-wrapper'>
+      <h4>{title}</h4>
+      {this.buildForm(currentStep, fieldMap)}
+    </div>;
+  }
+
   getForm() {
-    console.log(this.state.address);
-    const type = 'company'; // user
+    const currentStep = this.state.currentStep;
+    const steps = this.state.steps;
+    const nextStep = steps[steps.indexOf(currentStep) + 1];
+    const isLastStep = steps.indexOf(currentStep) === steps.length - 1;
+
     return (
-      <ValidatorForm onSubmit={this.handleSubmit} >
-        <h4>Infos</h4>
-        <div className='field-wrapper'>
-          {this.buildForm('userInfo', fields.userInfo[type])}
-        </div>
-        <h4>Endereco</h4>
-        <div className='field-wrapper'>
-          {this.buildForm('address', fields.address as IField[])}
-        </div>
+      <ValidatorForm
+        instantValidate
+        ref='form'
+        onSubmit={() => isLastStep ? this.handleSubmit() : this.setValue(nextStep, 'currentStep')}>
+        {this.getCurrentStepForm(currentStep)}
         <div className='action-buttons'>
           <RaisedButton
+            className='button'
             label='Cancelar'
             primary={true}
             disabled={this.state.loading}
-            onClick={() => this.props.onClose()} />
+            onClick={() => this.onClose()} />
 
           <RaisedButton
-            label='Adicionar'
-            type='submit'
-            disabled={this.state.loading} />
+            className='button'
+            label={isLastStep ? 'Adicionar' : 'Próximo'}
+            type='submit' />
         </div>
       </ValidatorForm>
     );
@@ -112,8 +182,7 @@ export class UserInfo extends React.Component<IModalProps> {
         contentStyle={customContentStyle}
         modal={true}
         autoScrollBodyContent={true}
-        open={this.props.isOpen}
-      >
+        open={this.props.isOpen}>
         {this.getForm()}
       </Dialog>
     );
