@@ -51,6 +51,9 @@ export class Header extends React.Component<ILoginProps> {
   }
 
   setValue(value: any, key: string) {
+    if (key === 'username') {
+      key = key.toLowerCase();
+    }
     this.state[key] = value;
     this.setState({ ...this.state});
   }
@@ -77,6 +80,7 @@ export class Header extends React.Component<ILoginProps> {
           <TextField
             floatingLabelText='Email'
             value={this.state.username}
+            style={{ width: '100%' }}
             errorText={!this.state.username && 'Este campo é obrigatório'}
             onChange={event => this.setValue(event.target.value, 'username')}
           />
@@ -84,6 +88,7 @@ export class Header extends React.Component<ILoginProps> {
             type='password'
             floatingLabelText='Password'
             value={this.state.password}
+            style={{ width: '100%' }}
             errorText={!this.state.password && 'Este campo é obrigatório'}
             onChange={event => this.setValue(event.target.value, 'password')}
           />
