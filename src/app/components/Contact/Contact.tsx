@@ -69,6 +69,7 @@ export class Contact extends React.Component<IUserProps> {
     }
 
     request.then(resp => {
+      toast.error(`${data.userInfo.name} ${id ? 'editado' : 'criado'}`);
       this.toggle(false);
       this.load();
     }).catch(e => toast.error(`Algo inesperado ocorreu ao tentar ${id ? 'editar' : 'criar'}: ${data.userInfo.name}`));
